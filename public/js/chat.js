@@ -17,6 +17,8 @@ function scrollToBottom() {
 }
 
 socket.on('connect', function () {
+    // deparam wandelt einen queryString zu einen javascript Object um.
+    // "name=John&address=1%202%20West%20St&phone=(123)%20123-1234" ->  {"name": "John", "address": "12 West St", "phone": "(123) 123-1234"}
     let params = jQuery.deparam(window.location.search);
 
     socket.emit('join', params, function (err) {
@@ -35,9 +37,14 @@ socket.on('disconnect', function () {
 
 socket.on('updateUserList', function (users) {
     let ol = jQuery('<ol></ol>');
+    let params = jQuery.deparam(window.location.search);
 
     users.forEach(function (user) {
-        ol.append(jQuery('<li></li>').text(user))
+        if (user === params.name) {
+            ol.append(jQuery('<li class="user"></li>').text(user));
+        } else {
+            ol.append(jQuery('<li></li>').text(user));
+        }
     });
 
     jQuery('#users').html(ol);
@@ -92,7 +99,6 @@ jQuery('#message-form').on('submit', function (e) {
     let messageTextbox = jQuery('[name=message]');
 
     socket.emit('createMessage', {
-        from: 'User',
         text: messageTextbox.val()
     }, function () {
         messageTextbox.val('')

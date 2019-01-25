@@ -26,7 +26,8 @@ io.on('connection', (socket) => {
             callback('Name and room name are required');
         }
 
-        socket.join(params.room);
+        params.room = params.room.toUpperCase();
+        socket.join(params.room)
         // socket.leave('The Office Fans') das Gegenstück zu join
         // io.emit -> io.to('The Office Fans').emit
         // socket.broadcast.emit -> socket.broadcast.to('The Office Fans').emit
